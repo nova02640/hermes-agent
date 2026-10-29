@@ -25,7 +25,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # 必须用带 workflow scope 的 PAT：GITHUB_TOKEN（Actions App token）无权推送
+          # .github/workflows/* 的改动，上游一改工作流文件整次 sync 就会 push 被拒。
+          token: ${{ secrets.SYNC_TOKEN }}
 
       - name: Merge upstream into fork
         run: |
