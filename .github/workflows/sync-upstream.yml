@@ -1,0 +1,63 @@
+name: Sync fork with upstream
+
+# 每日自动把上游仓库的新提交合并进本 fork，保持与上游同步。
+# 触发方式：定时（UTC 20:00 = 北京时间次日 04:00）+ 手动 workflow_dispatch。
+# 合并策略：普通 merge（保留本 fork 自己的提交，如本 workflow 文件本身），冲突时任务失败并通知。
+
+on:
+  schedule:
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge upstream into fork
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          UPSTREAM_URL="https://github.com/NousResearch/hermes-agent.git"
+          UPSTREAM_BRANCH="main"
+
+          git remote add upstream "$UPSTREAM_URL" 2>/dev/null || git remote set-url upstream "$UPSTREAM_URL"
+          git fetch --no-tags upstream "$UPSTREAM_BRANCH"
+
+          echo "fork HEAD:        $(git rev-parse --short HEAD)"
+          echo "upstream HEAD:    $(git rev-parse --short upstream/$UPSTREAM_BRANCH)"
+
+          if git merge-base --is-ancestor "upstream/$UPSTREAM_BRANCH" HEAD; then
+            echo "✅ 已与上游一致，无需合并。"
+            exit 0
+          fi
+
+          NEW_COMMITS=$(git rev-list --count "HEAD..upstream/$UPSTREAM_BRANCH")
+          echo "📥 上游有 $NEW_COMMITS 个新提交，开始合并…"
+          git merge --no-edit "upstream/$UPSTREAM_BRANCH"
+          git push origin "HEAD:$UPSTREAM_BRANCH"
+
+          echo "✅ 已同步到 $(git rev-parse --short HEAD)"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Fork sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "- fork: \`${{ github.repository }}@${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- upstream: \`NousResearch/hermes-agent:main\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- now: \`$(git -C . rev-parse --short HEAD 2>/dev/null || echo n/a)\`" >> "$GITHUB_STEP_SUMMARY"
