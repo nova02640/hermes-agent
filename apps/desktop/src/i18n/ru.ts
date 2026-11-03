@@ -398,7 +398,7 @@ export const ruOverrides = {
       advancedOutput: 'Ограничения вывода',
       advancedDelegation: 'Субагенты',
       advancedDesktop: 'Приложение и запуск',
-      gatewayConnection: 'Это окно',
+      gatewayConnection: 'Основной шлюз',
       gatewayDevices: 'Сохранённые подключения',
       gatewayManagedUpdates: 'Удалённые обновления',
       gatewayManagedUpdatesUnavailable: 'Нужна версия приложения с поддержкой управляемых обновлений SSH.',
@@ -1475,6 +1475,10 @@ export const ruOverrides = {
     changesApplyNewSessions: 'Изменения применяются к новым сеансам.',
     skillUpdated: 'Навык обновлён',
     edit: 'Изменить',
+    lock: 'Заблокировать',
+    locked: 'Заблокирован',
+    lockHint: 'Пока навык заблокирован, агент не может его менять. Вы по-прежнему можете редактировать его сами.',
+    unlockedHint: 'Заблокируйте навык, чтобы агент не мог его менять. Вы по-прежнему можете редактировать его сами.',
     archive: 'В архив',
     skillArchivedTitle: 'Навык в архиве',
     skillArchivedMessage: 'Восстановить через hermes curator restore.',
@@ -3165,7 +3169,9 @@ export const ruOverrides = {
       ultra: 'Ультра',
       sendsOnRoute: (level: string) => `на этом маршруте отправляется ${level}`,
       updateFailed: 'Не удалось обновить опцию модели',
-      fastFailed: 'Не удалось обновить быстрый режим'
+      fastFailed: 'Не удалось обновить быстрый режим',
+      daybreak: 'Daybreak',
+      daybreakFailed: 'Не удалось обновить Daybreak'
     },
     gatewayMenu: {
       gateway: 'Шлюз',
@@ -3333,6 +3339,14 @@ export const ruOverrides = {
     terminalNew: 'Новый терминал',
     terminalCloseOthers: 'Закрыть другие',
     terminalCloseAll: 'Закрыть все',
+    terminalNewOn: 'Новый терминал на…',
+    terminalGatewayRemoved: 'Удалённый шлюз',
+    terminalGatewayRemovedBody:
+      'Шлюз, на котором работал этот терминал, удалён, поэтому его нельзя открыть снова. Закройте эту вкладку.',
+    terminalGatewayNoShellBody:
+      'У этого шлюза нет доступа к оболочке, поэтому терминал нельзя открыть снова. Закройте эту вкладку.',
+    terminalDisconnectedBody:
+      'Терминал отключён. Нажмите Enter, чтобы запустить новую оболочку; история прокрутки сохранена.',
     addToChat: 'Добавить в чат'
   },
   preview: {
